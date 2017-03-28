@@ -1,4 +1,7 @@
-﻿using System;
+﻿//Author: fullmetalcache
+//Date: 2017-03-27
+
+using System;
 using System.Text;
 using System.IO;
 
