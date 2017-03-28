@@ -84,7 +84,7 @@ namespace PowerStripper
 
         static void b64Encode( string inFile, string outFile )
         {
-            using (StreamWriter fso = new System.IO.StreamWriter(outFile))
+            using (StreamWriter fso = new StreamWriter(outFile))
             {
                 fso.Write(Convert.ToBase64String(Encoding.UTF8.GetBytes(File.ReadAllText(inFile))));
             }
