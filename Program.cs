@@ -35,54 +35,46 @@ namespace PowerStripper
             b64Encode(strippedFile, encodedFile);
         }
 
-        static void stripComments( string inFile, string outFile )
+        static void stripComments(string inFile, string outFile)
         {
+            string data = "";
+            bool enter = true;
             using (StreamWriter fso = new System.IO.StreamWriter(outFile))
             {
-                bool startToken = false;
-
                 foreach (string line in File.ReadLines(inFile))
                 {
-                    if (!startToken)
+                    string temp = line.Replace(" ", "");
+                    if (line.IndexOf("<#") != -1)
                     {
-                        if (line.Contains("<#"))
+                        enter = false;
+                        for (int i = 0; i < line.IndexOf("<#"); i++)
                         {
-                            startToken = true;
-                            continue;
+                            data = data + line[i];
                         }
-                        else
-                        {
-                            if (line.Length > 0)
-                            {
-                                string outLine = line;
+                        data = data + "\n";
 
-                                if (outLine.Contains("#"))
-                                {
-                                    int idx = outLine.IndexOf("#");
-                                    outLine = outLine.Substring(0, idx);
-                                }
-
-                                if (outLine.Length > 0)
-                                {
-                                    outLine = outLine.Replace("Write-Host", "Write-Output");
-
-                                    fso.WriteLine(outLine);
-                                }
-                            }
-                        }
                     }
-                    else
+                    else if (line.IndexOf("#>") != -1)
                     {
-                        if (line.Contains("#>"))
+                        enter = true;
+                        for (int i = line.IndexOf("#>") + 2; i < line.Length; i++)
                         {
-                            startToken = false;
+                            if (i < line.Length)
+                                data = data + line[i];
                         }
+                        data = data + "\n";
+                    }
+                    else if (enter == true && temp != "" && temp[0] != '#')
+                    {
+                        data = data + line + "\n";
                     }
                 }
+                fso.Write(data);
             }
+
         }
 
-        static void b64Encode( string inFile, string outFile )
+        static void b64Encode(string inFile, string outFile)
         {
             using (StreamWriter fso = new StreamWriter(outFile))
             {
